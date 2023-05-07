@@ -1,5 +1,5 @@
 import tkinter as tk
-from datetime import datetime
+import datetime
 from random import random
 from tkinter import ttk
 import matplotlib as plt
@@ -8,7 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 import pandas as pd
 from opcua import *
-
+import Algorithm
 
 root = tk.Tk()  # создаем объект Tk для gui
 root.title('Печь')  # название окна
@@ -135,28 +135,29 @@ def create_data():  # отправка данных на сервер
 
     # получение значения выхода от модели
     in_now = np.array([AgglCons_now, PelletCons_now, OreCons_now, CokeCons_now, BlastCons_now, NatGasCons_now])
-    IronTemp_now = IronTemp_bagging(in_now)
-    Algorithm.AgglCons.set_value(AgglCons_now)  # запись всех значений на сервер
-    Algorithm.PelletCons.set_value(PelletCons_now)
-    Algorithm.OreCons.set_value(AgglCons_now)
-    Algorithm.OreCons.set_value(OreCons_now)
-    Algorithm.BlastCons.set_value(BlastCons_now)
-    Algorithm.NatGasCons.set_value(NatGasCons_now)
-    Algorithm.IronTemp.set_value(IronTemp_now)
-    Algorithm.TIME.set_value(time_now)
+    IronTemp_now = Algorithm.IronTemp_bagging(in_now)
+    Algorithm.parameters['AgglomerateConsumption'].set_value(AgglCons_now)  # запись всех значений на сервер
+    Algorithm.parameters['PelletsConsumption'].set_value(PelletCons_now)
+    Algorithm.parameters['OreConsumption'].set_value(AgglCons_now)
+    Algorithm.parameters['CokeConsumption'].set_value(OreCons_now)
+    Algorithm.parameters['BlastConsumption'].set_value(BlastCons_now)
+    Algorithm.parameters['NaturalGasConsumption'].set_value(NatGasCons_now)
+    Algorithm.parameters['IronTemperature'].set_value(IronTemp_now)
+    Algorithm.parameters['Time'].set_value(time_now)
     root.after(500, read_data)  # запуск следующей функции, которая читает данные с сервера и выводит их в GUI
 
-def read_data():  # чтение данных с сервера и вывод их в gui
+# чтение данных с сервера и вывод их в gui
+def read_data():
     global count, xs, ys
     # чтение данных с сервера
-    AgglCons_now = client.get_node(Algorithm.AgglCons).get_value()
-    PelletCons_now = client.get_node(Algorithm.PelletCons).get_value()
-    OreCons_now = client.get_node(Algorithm.OreCons).get_value()
-    CokeCons_now = client.get_node(Algorithm.CokeCons).get_value()
-    BlastCons_now = client.get_node(Algorithm.BlastCons).get_value()
-    NatGasCons_now = client.get_node(Algorithm.NatGasCons).get_value()
-    IronTemp_now = client.get_node(Algorithm.IronTemp).get_value()
-    time_now = client.get_node(Algorithm.TIME).get_value()
+    AgglCons_now = Algorithm.client.get_node(Algorithm.parameters['AgglomerateConsumption']).get_value()
+    PelletCons_now = Algorithm.client.get_node(Algorithm.parameters['PelletsConsumption']).get_value()
+    OreCons_now = Algorithm.client.get_node(Algorithm.parameters['OreConsumption']).get_value()
+    CokeCons_now = Algorithm.client.get_node(Algorithm.parameters['CokeConsumption']).get_value()
+    BlastCons_now = Algorithm.client.get_node(Algorithm.parameters['BlastConsumption']).get_value()
+    NatGasCons_now = Algorithm.client.get_node(Algorithm.parameters['NaturalGasConsumption']).get_value()
+    IronTemp_now = Algorithm.client.get_node(Algorithm.parameters['IronTemperature']).get_value()
+    time_now = Algorithm.client.get_node(Algorithm.parameters['Time']).get_value()
     # получение температуры по матметодам
     temp_now_lin = linreg([AgglCons_now, PelletCons_now, OreCons_now, CokeCons_now, BlastCons_now, NatGasCons_now])
     # добавление всех значений в таблицу
