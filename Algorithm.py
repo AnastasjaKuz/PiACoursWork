@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 # Считывание  данных
 data = pd.read_csv('input_Kuznetsova.csv')
 
-X = data.iloc[:, 2:6].values
-Y = data.iloc[:, 6:8].values
+X = data.iloc[:, 1:7].values
+Y = data.iloc[:, 7].values
 
 # Создание и тренировка модели. Для обучения выделено 30% данных
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=30)
-model = BaggingRegressor()
-model.fit(X_train, Y_train)
+model = BaggingRegressor() # Выбираем модель
+model.fit(X_train, Y_train) # Тренируем модель
 
 
 def IronTemp_bagging(x):
@@ -36,7 +36,7 @@ print(type(model.predict(X)))
 # Создание сервера
 # Настройка адреса сервера
 server = Server()
-url = 'opc.tcp://127.0.0.1:49321'
+url = 'opc.tcp://127.0.0.1:12345'
 server.set_endpoint(url)
 
 # Название сервера, создание узла данных
@@ -61,8 +61,12 @@ for param, value in parameters.items():
     parameters[param] = Params.add_variable(addspace, param, value)
     parameters[param].set_writable()
 
-server.start() # Запуск сервера
+# Запуск сервера
+server.start()
 
 client = Client(url)  # создаем клиента
 client.connect()
+
+maxs = data.max()  # максимальные значения
+mins = data.min()  # минимальные значения
 

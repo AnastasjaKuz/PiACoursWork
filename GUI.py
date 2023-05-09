@@ -1,6 +1,6 @@
 import tkinter as tk
 import datetime
-from random import random
+import random
 from tkinter import ttk
 import matplotlib as plt
 from matplotlib.figure import Figure
@@ -123,13 +123,12 @@ def linreg(arr):  # формула линейной регрессии с мат
 
 def create_data():  # отправка данных на сервер
     # отправка данных на сервер в зависимости от того, включена ли случайная генерация
-    AgglCons_now = random.uniform(mins['Расход агломерата'], maxs['Расход агломерата']) if RANDOM else input_data['AgglCons']
-    PelletCons_now = random.uniform(mins['Расход окатыша'], maxs['Расход окатыша']) if RANDOM else input_data['PelletCons']
-    OreCons_now = random.uniform(mins['Расход руды'], maxs['Расход руды']) if RANDOM else input_data['OreCons']
-    CokeCons_now = random.uniform(mins['Расход кокса'], maxs['Расход кокса']) if RANDOM else input_data['OreCons']
-    BlastCons_now = random.uniform(mins['Расход дутья'], maxs['Расход дутья']) if RANDOM else input_data['BlastCons']
-    NatGasCons_now = random.uniform(mins['Расход природного газа'], maxs['Расход природного газа']) if RANDOM \
-        else input_data['NatGasCons']
+    AgglCons_now = random.uniform(Algorithm.mins['Расход агломерата'], Algorithm.maxs['Расход агломерата']) if RANDOM else input_data['AgglCons']
+    PelletCons_now = random.uniform(Algorithm.mins['Расход окатыша'], Algorithm.maxs['Расход окатыша']) if RANDOM else input_data['PelletCons']
+    OreCons_now = random.uniform(Algorithm.mins['Расход руды'], Algorithm.maxs['Расход руды']) if RANDOM else input_data['OreCons']
+    CokeCons_now = random.uniform(Algorithm.mins['Расход кокса'], Algorithm.maxs['Расход кокса']) if RANDOM else input_data['OreCons']
+    BlastCons_now = random.uniform(Algorithm.mins['Расход дутья'], Algorithm.maxs['Расход дутья']) if RANDOM else input_data['BlastCons']
+    NatGasCons_now = random.uniform(Algorithm.mins['Раcход природного газа'], Algorithm.maxs['Раcход природного газа']) if RANDOM else input_data['NatGasCons']
 
     time_now = datetime.datetime.now()
 
@@ -159,7 +158,7 @@ def read_data():
     IronTemp_now = Algorithm.client.get_node(Algorithm.parameters['IronTemperature']).get_value()
     time_now = Algorithm.client.get_node(Algorithm.parameters['Time']).get_value()
     # получение температуры по матметодам
-    temp_now_lin = linreg([AgglCons_now, PelletCons_now, OreCons_now, CokeCons_now, BlastCons_now, NatGasCons_now])
+    IronTemp_now_lin = linreg([AgglCons_now, PelletCons_now, OreCons_now, CokeCons_now, BlastCons_now, NatGasCons_now])
     # добавление всех значений в таблицу
     graph.set('I001', 1, round(AgglCons_now, 2))
     graph.set('I002', 1, round(PelletCons_now, 2))
